@@ -44,8 +44,8 @@
 </template>
 
 <script>
-import TabBar from "../common/tarbar/TabBar";
-import TabBarItem from "../common/tarbar/TarBarItem";
+import TabBar from "@/components/common/tarbar/TabBar";
+import TabBarItem from "@/components/common/tarbar/TarBarItem";
 
 export default {
   name: "MainTabBar",
