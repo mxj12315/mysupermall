@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-const Home = ()=>import("../pages/home/Home")
-const CateGroy = ()=>import("../pages/category/CateGory")
-const Cart = ()=>import("../pages/cart/Cart")
-const ProFile = ()=>import("../pages/profile/ProFile")
+const Home = ()=>import("@/pages/home/Home")
+const CateGroy = ()=>import("@/pages/category/CateGory")
+const Cart = ()=>import("@/pages/cart/Cart")
+const ProFile = ()=>import("@/pages/profile/ProFile")
 
 
 // 使用第三方插件

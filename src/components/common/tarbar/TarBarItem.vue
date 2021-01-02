@@ -18,11 +18,11 @@
 export default {
   name: "tabbaritem",
   props: {
-    path: {
+    path: {  // 路由跳转路径
       type: String,
       default: "/home",
     },
-    activeColor: {
+    activeColor: {  // 点击后的文字颜色
       type: String,
       default: '',
     },

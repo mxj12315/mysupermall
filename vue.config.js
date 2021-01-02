@@ -1,9 +1,8 @@
 module.exports ={
-  configureWebpack:{
-    reserve:{
-      alias:{  // 文件夹别名
-        'src':'@',
-        'asserts':'@/assets',
+  configureWebpack: {
+    resolve: {   //这里写错会报错resolve：解决
+      alias: {  // 文件夹别名
+        'assets':'@/assets',
         'common':'@/common',
         'components':'@/components',
         'network':'@/network',

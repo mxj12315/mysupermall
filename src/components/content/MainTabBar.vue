@@ -1,6 +1,6 @@
 <template>
   <tab-bar>
-    <tab-bar-item path="/home" activeColor="blue">
+    <tab-bar-item path="/home" >
       <img slot="item-icon" src="~assets/img/tabbar/home.png" alt="" />
       <img
         slot="item-icon-active"
