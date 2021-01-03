@@ -85,4 +85,7 @@ export function request(config) {
 //         })
 // }
 
-
+export function requestGoods(config){
+  const _axios = axios
+  return _axios(config)
+}

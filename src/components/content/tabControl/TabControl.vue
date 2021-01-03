@@ -29,6 +29,7 @@ name: "TabControl",
   methods:{
     onChangeIndex(index){
       this.currentIndex=index
+      this.$emit('getTabControlIndex',index)
     }
   }
 }

@@ -15,7 +15,18 @@
     <!--图片链接-->
     <feature/>
     <!--tabControl-->
-    <tab-control class="tab-con" :titles="titles"/>
+    <tab-control class="tab-con" :titles="titles" @getTabControlIndex="onGetTabControl"/>
+    <div v-for="(item,key,index) in goods">
+      <good-list v-if="homeCurrentIndex==index" :goodList="goods[key].list"/>
+
+    </div>
+
+    <div v-if="goods.pop.list.length!==0">
+      <div>
+        <img v-for="(good,index) in goods.pop.list" :src="goods.pop.list[index].img" alt="" >
+      </div>
+
+    </div>
     <ul>
       <li>列表</li>
       <li>列表</li>
@@ -37,15 +48,7 @@
       <li>列表</li>
       <li>列表</li>
       <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
+
     </ul>
   </div>
 </template>
@@ -57,11 +60,15 @@ import HomeSwiper from "@/pages/home/chrildcomponents/HomeSwiper";
 import RecommendView from "@/pages/home/chrildcomponents/RecommendView";
 import Feature from "@/pages/home/chrildcomponents/Feature";
 import TabControl from "@/components/content/tabControl/TabControl";
+import GoodList from "@/components/content/goods/GoodList";
+
 // 函数导入
 import {
   getHomeMultiData,
   getHomeGoods
 } from "@/network/home";
+
+
 
 
 export default {
@@ -72,20 +79,21 @@ export default {
       banners: [],
       recommends: [],
       titles: ['精选', '好物', '热销'],
-      goods:{
-        pop:{
-          page:0,
-          list:[]
+      goods: {
+        pop: {
+          page: 0,
+          list: []
         },
-        news:{
-          page:0,
-          list:[]
+        new: {
+          page: 0,
+          list: []
         },
-        sell:{
-          page:0,
-          list:[]
+        sell: {
+          page: 0,
+          list: []
         }
-      }
+      },
+      homeCurrentIndex:0
     }
   },
   components: {
@@ -93,13 +101,14 @@ export default {
     HomeSwiper,
     RecommendView,
     Feature,
-    TabControl
+    TabControl,
+    GoodList
   },
   methods: {
-    // abc(){
-    //   console.log('-----')
-    //   console.log(this.$refs.homeSwiper);
-    // }
+    onGetTabControl(options){
+      console.log(options)
+      this.homeCurrentIndex=options
+    }
   },
   created() {
     getHomeMultiData().then(res => {
@@ -110,12 +119,25 @@ export default {
       console.log(err);
     })
 
-    getHomeGoods('pop',10).then(res=>{
-      console.log(res);
-    })
-    .catch(err=>{
-      console.log(err);
-    })
+    getHomeGoods('pop', 10)
+      .then(res => {
+        console.log(res);
+        const keys = Object.keys(res.data)
+        // console.log(keys);
+        for (let i = 0; i < keys.length; i++) {
+          this.goods[keys[i]].list = res.data[keys[i]]
+
+
+        }
+
+        // this.goods.pop.list = res.data.pop
+        // this.goods.new.list = res.data.new
+        // this.goods.sell.list = res.data.sell
+        // this.
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
 }
