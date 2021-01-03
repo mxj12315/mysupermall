@@ -11,7 +11,7 @@
         </span>
           <div class="good-info">
             <span class="good-price">
-          {{ goodsItem.price }}
+          ￥{{ goodsItem.price }}
         </span>
             <span class="good-star">
           <img src="~assets/img/home/collect_icon.png" alt=""> {{ goodsItem.star }}
