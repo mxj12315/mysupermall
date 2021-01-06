@@ -89,3 +89,9 @@ export function requestGoods(config){
   const _axios = axios
   return _axios(config)
 }
+
+
+export function requestDetail(config){
+  const _axios = axios
+  return _axios(config)
+}

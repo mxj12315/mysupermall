@@ -18,7 +18,7 @@
             ref="homeScroll"
             class="home-wrapper">
       <!--轮播图-->
-      <home-swiper :banners="banners"/>
+      <home-swiper :banners="banners" />
       <!--子菜单-->
       <recommend-view :recommends="recommends"/>
       <!--图片链接-->
@@ -102,7 +102,12 @@ export default {
       const page = this.goods[type].page + 1
       getHomeGoods(type, page)
         .then(res => {
-          this.goods[type].list = this.goods[type].list.concat(res.data[type])
+          // this.goods[type].list =[]  //非服务器的数据，需要重置为空
+          for (const item of res.data[type]) {
+            this.goods[type].list.push(item)
+          }
+          // this.goods[type].list = this.goods[type].list.concat(res.data[type])
+          // console.log(res.data[type]);
           this.goods[type].page += 1
         })
         .catch(err => {
