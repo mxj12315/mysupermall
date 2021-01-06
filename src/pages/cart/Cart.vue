@@ -1,12 +1,16 @@
 <template>
   <div>
-      <h2>购物车</h2>
+    <h2>购物车</h2>
+
   </div>
 </template>
 
 <script>
 export default {
-  name:'Cart'
+  name: 'Cart',
+  methods: {
+
+  }
 }
 </script>
 

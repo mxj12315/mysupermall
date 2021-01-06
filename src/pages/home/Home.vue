@@ -1,55 +1,36 @@
 <template>
   <div id="home">
     <!--顶部导航-->
-    <div class="nav">
+    <div class="nav" @dblclick="onHomeDbClick">
       <nav-bar navBgc="deeppink">
         <div class="home-navbar" slot="center">
           首页
         </div>
       </nav-bar>
     </div>
-    <!--轮播图-->
-    <home-swiper :banners="banners"/>
-    <!--子菜单-->
-    <recommend-view :recommends="recommends"/>
-    <!--图片链接-->
-    <feature/>
-    <!--tabControl-->
-    <tab-control class="tab-con" :titles="titles" @getTabControlIndex="onGetTabControl"/>
-    <div v-for="(item,key,index) in goods">
-      <good-list v-if="homeCurrentIndex==index" :goodList="goods[key].list"/>
-
-    </div>
-
-    <div v-if="goods.pop.list.length!==0">
-      <div>
-        <img v-for="(good,index) in goods.pop.list" :src="goods.pop.list[index].img" alt="" >
+    <!--吸顶-->
+    <tab-control :class="{fixed:isPositions}" v-show="isPositions" ref="tabControl2" :titles="titles"
+                 @getTabControlIndex="onGetTabControl"/>
+    <scroll :probe-type="3"
+            :pullUpLoad="true"
+            @pullingUp="onPullingUp"
+            @scrollOffset="onScrollOffset"
+            ref="homeScroll"
+            class="home-wrapper">
+      <!--轮播图-->
+      <home-swiper :banners="banners"/>
+      <!--子菜单-->
+      <recommend-view :recommends="recommends"/>
+      <!--图片链接-->
+      <feature/>
+      <!--tabControl-->
+      <tab-control ref="tabControl1" :titles="titles" @getTabControlIndex="onGetTabControl"/>
+      <div v-for="(item,key,index) in goods">
+        <good-list v-if="homeCurrentIndex==index" :goodList="goods[key].list"/>
       </div>
-
-    </div>
-    <ul>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-
-    </ul>
+      <load-more v-show="modelIsShow"/>
+    </scroll>
+    <back-top @click.native="onBackTop" v-show="isShow"/>
   </div>
 </template>
 
@@ -61,6 +42,10 @@ import RecommendView from "@/pages/home/chrildcomponents/RecommendView";
 import Feature from "@/pages/home/chrildcomponents/Feature";
 import TabControl from "@/components/content/tabControl/TabControl";
 import GoodList from "@/components/content/goods/GoodList";
+import Scroll from "@/components/common/scroll/Scroll";
+import BackTop from "@/components/content/backTop/BackTop";
+import ModelBox from "@/components/common/modelBox/ModelBox";
+import LoadMore from "@/components/common/loadMore/LoadMore";
 
 // 函数导入
 import {
@@ -68,12 +53,9 @@ import {
   getHomeGoods
 } from "@/network/home";
 
-
-
-
 export default {
   name: 'Home',
-
+  comments: false,
   data() {
     return {
       banners: [],
@@ -93,7 +75,13 @@ export default {
           list: []
         }
       },
-      homeCurrentIndex:0
+      homeCurrentIndex: 0,
+      scroll: null,
+      isShow: false,
+      modelIsShow: false,
+      isPositions: false,
+      offsetTop: 556,
+      currentScroll:0
     }
   },
   components: {
@@ -102,13 +90,84 @@ export default {
     RecommendView,
     Feature,
     TabControl,
-    GoodList
+    GoodList,
+    Scroll,
+    BackTop,
+    ModelBox,
+    LoadMore,
+
   },
   methods: {
-    onGetTabControl(options){
-      console.log(options)
-      this.homeCurrentIndex=options
+    getHomeTypeGoods(type) {
+      const page = this.goods[type].page + 1
+      getHomeGoods(type, page)
+        .then(res => {
+          this.goods[type].list = this.goods[type].list.concat(res.data[type])
+          this.goods[type].page += 1
+        })
+        .catch(err => {
+          console.log(err);
+        })
+
+    },
+    onGetTabControl(index) {
+      /*
+      控制切换
+      */
+      this.homeCurrentIndex = index
+      this.$refs.tabControl1.currentIndex = index
+      this.$refs.tabControl2.currentIndex = index
+    },
+    onBackTop() {
+      this.$refs.homeScroll.backTop(0, 0)
+    },
+    onScrollOffset(options) {   // 监听滚动条的位
+      // options[1] > -500 ? this.isShow = false : this.isShow = true
+      this.isShow = -options[1] > 500
+      this.isPositions = -options[1] > this.offsetTop
+    },
+    // 上拉加载
+    onPullingUp() {
+      if (this.homeCurrentIndex == 0) {
+        const isLoading = this.getHomeTypeGoods('pop')
+        // 继续加载控制
+        this.modelIsShow = true
+        // this.modelIsShow=false
+        setTimeout(() => {
+          this.modelIsShow = false
+          this.$refs.homeScroll.finishPullUps()
+        }, 3000)
+      } else if (this.homeCurrentIndex == 1) {
+        this.getHomeTypeGoods('new')
+        this.modelIsShow = true
+        // 继续加载控制
+        setTimeout(() => {
+          this.modelIsShow = false
+          this.$refs.homeScroll.finishPullUps()
+        }, 3000)
+      } else if (this.homeCurrentIndex == 2) {
+        this.getHomeTypeGoods('sell')
+        this.modelIsShow = true
+        // 继续加载控制
+        setTimeout(() => {
+          this.modelIsShow = false
+          this.$refs.homeScroll.finishPullUps()
+        }, 3000)
+      }
+    },
+    onHomeDbClick() {
+      this.$refs.homeScroll.backTop(0, 0)
     }
+
+  },
+  activated() {
+    // 进入时将离开时的y值复制给页面的scroll组件
+    this.$refs.homeScroll.backTop(0,this.currentScroll,600)
+    this.$refs.homeScroll.refresh()   // 执行一次刷新
+  },
+  deactivated() {
+    // 离开时记录一下y坐标
+    this.currentScroll =this.$refs.homeScroll.getCurrentScrollY()
   },
   created() {
     getHomeMultiData().then(res => {
@@ -119,51 +178,56 @@ export default {
       console.log(err);
     })
 
-    getHomeGoods('pop', 10)
-      .then(res => {
-        console.log(res);
-        const keys = Object.keys(res.data)
-        // console.log(keys);
-        for (let i = 0; i < keys.length; i++) {
-          this.goods[keys[i]].list = res.data[keys[i]]
 
+    this.getHomeTypeGoods('pop')
+    this.getHomeTypeGoods('new')
+    this.getHomeTypeGoods('sell')
 
-        }
+  },
 
-        // this.goods.pop.list = res.data.pop
-        // this.goods.new.list = res.data.new
-        // this.goods.sell.list = res.data.sell
-        // this.
-      })
-      .catch(err => {
-        console.log(err);
-      })
+  mounted() {  // 挂载到dom时候执行
+    console.log(this.$refs.tabControl2)
+    console.log(this.$refs.tabControl1)
   }
 
 }
 </script>
 
-<style>
+<style scoped>
 #home {
-  padding-top: 44px;
-  padding-bottom: 49px;
+  height: 100vh;
+  position: relative;
 }
 
-.nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 9999;
-}
+/*中间部分已经是滚动，这里不需要了*/
+/*.nav {*/
+/*  position: fixed;*/
+/*  top: 0;*/
+/*  left: 0;*/
+/*  right: 0;*/
+/*  z-index: 9999;*/
+/*}*/
 
 .home-navbar {
   color: #f6f6f6;
   font-size: 14px;
 }
 
-.tab-con {
-  position: sticky;
+/*betterscroll中失效*/
+.fixed {
+  position: fixed;
   top: 44px;
+  left: 0;
+  right: 0;
+  z-index: 999;
+}
+
+.home-wrapper {
+  overflow: hidden;
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
 }
 </style>

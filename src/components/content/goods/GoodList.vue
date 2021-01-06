@@ -13,6 +13,10 @@ export default {
       type:Array,
       default(){
         return []
+      },
+      validator: function (value) {
+        // console.log('00000',value)
+        return value.length%2==0?value:value.push({})
       }
     }
   },
@@ -27,6 +31,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-  margin-top: 10px;
+  margin: 10px 5px auto;
+
 }
 </style>

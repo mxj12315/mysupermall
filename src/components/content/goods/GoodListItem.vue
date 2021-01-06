@@ -1,6 +1,6 @@
 <template>
   <div class="good-list-item">
-    <div class="good">
+    <div class="good" v-if="Object.keys(goodsItem)">
       <a href="goodsItem.url" class="good-link">
         <div class="good-img">
           <img :src="goodsItem.img" alt="">
@@ -43,13 +43,15 @@ export default {
 }
 
 .good-list-item {
-  width: 150px;
-  height: 250px;
+  width: 48%;
+  height: 350px;
 }
 
 .good-img img {
   width: 100%;
-  height: 200px;
+  height: 300px;
+  border-radius: 3%;
+
 }
 
 .good-content {
@@ -68,6 +70,7 @@ export default {
 
 .good-info{
   text-align: right;
+  padding-right: 5px;
 }
 
 .good-price {
