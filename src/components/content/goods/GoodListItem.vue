@@ -1,8 +1,8 @@
 <template>
   <div class="good-list-item" @click="getGoodId">
     <div class="good" v-if="Object.keys(goodsItem)">
-      <div class="good-img">
-        <img :src="goodsItem.img" alt="">
+      <div class="good-img" :style="{height:goodHeight+'px'}">
+        <img :src="goodsItem.img" ref="imgGoodHeight"  @load="getGoodItemImageHeight" alt="">
       </div>
       <div class="good-content">
         <span class="good-title" :title="goodsItem.title">
@@ -32,12 +32,34 @@ export default {
       }
     }
   },
-  methods:{
-    // 获取商品的id,并且做路由跳转
-    getGoodId(){
-      // console.log(this.goodsItem.id);
-      this.$router.push('/detail/'+this.goodsItem.id)
+  data() {
+    return {
+      goodHeight: ''
     }
+  },
+  methods: {
+    // 获取商品的id,并且做路由跳转
+    getGoodId() {
+      // console.log(this.goodsItem.id);
+      this.$router.push('/detail/' + this.goodsItem.id)
+    },
+    getGoodItemImageHeight() {
+
+      if (this.$refs.imgGoodHeight) {
+        this.$nextTick(() => {
+          let aaa = this.$refs.imgGoodHeight.height
+          this.goodHeight = aaa
+          console.log(this.goodHeight)
+        })
+      }
+    }
+  },
+  mounted() {
+
+    this.getGoodItemImageHeight()  // 确保有高度
+    window.addEventListener('resize',()=>{
+      this.goodHeight=this.$refs.imgGoodHeight.height
+    },false)
   }
 }
 </script>
@@ -51,7 +73,7 @@ export default {
 
 .good-img img {
   width: 100%;
-  min-height: 200px;
+  min-height: 100%;
   border-radius: 3%;
 
 }
@@ -70,7 +92,7 @@ export default {
   white-space: nowrap;
 }
 
-.good-info{
+.good-info {
   text-align: right;
   padding-right: 5px;
 }

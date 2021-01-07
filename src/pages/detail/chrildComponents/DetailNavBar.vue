@@ -46,7 +46,7 @@ export default {
 
 <style scoped>
 .titles {
-  font-size: 12px;
+  font-size: 14px;
   display: flex;
   justify-content: space-around;
   align-items: center;

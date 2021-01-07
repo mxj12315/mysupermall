@@ -1,4 +1,5 @@
 <template>
+<!--轮播图下的菜单-->
   <div class="rec-view">
     <div class="rec-view-item"  v-for="item in recommends" :key="item.tilde">
       <a :href="item.link">

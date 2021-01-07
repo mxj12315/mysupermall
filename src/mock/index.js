@@ -31,9 +31,17 @@ function GetParameter(paramsName, url) {
 
 // 生成详情页的数据
 function goodDetail(uid){
+  const array = ["中通快递","韵达快递","圆通快递","天天快递","顺丰快递","邮政快递"];
   let detail = {
     topImages:[Random.dataImage('300x250',uid),Random.dataImage('300x250',uid),Random.dataImage('300x250',uid),Random.dataImage('300x250',uid)],
-    bb:789
+    title:Random.ctitle(30),
+    columns:['销量 '+Random.int(10,1000)+'件','收藏 '+Random.int(10,1000)+'人','快递 '+array[Math.round(Math.random() * array.length)]],
+    desc:'新款上市',
+    discount:'活动价',
+    newPrice:Random.float(10, 200, 2, 2),
+    oldPrice:Random.float(20, 300, 2, 2),
+    realPrice:Random.float(10, 200, 2, 2),
+
   };
   return {detail}
 }
@@ -47,7 +55,9 @@ Mock.mock(RegExp('/home/data' + ".*"), 'get', function (options) {
 });
 
 Mock.mock(RegExp('/detail' + ".*"), 'get',function (options){
-  return goodDetail(123)
+  let goodsUid = GetParameter('uid', options.url.split('?')[1])
+
+  return goodDetail(goodsUid)
 })
 
 
